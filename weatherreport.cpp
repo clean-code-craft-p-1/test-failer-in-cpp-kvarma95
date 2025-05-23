@@ -65,29 +65,13 @@ namespace WeatherSpace
         return report;
     }
     
-    void TestRainy()
+    
+    void TestWeatherReportCase(double temp, int precip, int humidity, int wind, const std::string& expectedSubstring)
     {
-        
-        ConfiguratableSensorStub sensor(26, 70, 72, 52); 
-        string report = Report(sensor);
-        cout << report << endl;
-        assert(report.find("rain") != string::npos);
-        
-
-        
-        sensor = ConfiguratableSensorStub(26, 60, 72, 30); 
-        report = Report(sensor);
-        cout << report << endl;
-        assert(report.find("partly cloudy") != string::npos);
-        
-
-        
-        sensor = ConfiguratableSensorStub(26, 62, 72, 30); 
-        report = Report(sensor);
-        cout << report << endl;
-        assert(report.find("partly cloudy") != string::npos);
-        
-
+        ConfiguratableSensorStub sensor(temp, precip, humidity, wind);
+        std::string report = Report(sensor);
+        std::cout << "Report: " << report << std::endl;
+        assert(report.find(expectedSubstring) != std::string::npos);
     }
 
     void TestHighPrecipitation()
@@ -99,18 +83,16 @@ namespace WeatherSpace
         string report = Report(sensor);
         cout << report << endl;
         assert(report.find("rain") != string::npos);
-
-
-        // strengthen the assert to expose the bug
-        // (function returns Sunny day, it should predict rain)
-        report = Report(sensor);
         assert(report.length() > 0);
     }
 }
 
 void testWeatherReport() {
     cout << "\nWeather report test\n";
-    WeatherSpace::TestRainy();
+    WeatherSpace::TestWeatherReportCase(26, 70, 72, 52, std::string("rain"));
+    WeatherSpace::TestWeatherReportCase(26, 60, 72, 30, std::string("partly cloudy"));
+    WeatherSpace::TestWeatherReportCase(26, 62, 72, 30, std::string("partly cloudy"));
+    WeatherSpace::TestWeatherReportCase(26, 60, 72, 50, std::string("rain"));
     WeatherSpace::TestHighPrecipitation();
     cout << "All is well (maybe)\n";
 }
