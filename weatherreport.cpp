@@ -67,20 +67,26 @@ namespace WeatherSpace
     
     void TestRainy()
     {
-        ConfiguratableSensorStub sensor = (26, 70, 72, 52); 
+        
+        ConfiguratableSensorStub sensor(26, 70, 72, 52); 
         string report = Report(sensor);
         cout << report << endl;
         assert(report.find("rain") != string::npos);
+        
 
-        sensor = (26, 60, 72, 30); 
-        string report = Report(sensor);
+        
+        sensor = ConfiguratableSensorStub(26, 60, 72, 30); 
+        report = Report(sensor);
         cout << report << endl;
         assert(report.find("partly cloudy") != string::npos);
+        
 
-        sensor = (26, 62, 72, 30); 
-        string report = Report(sensor);
+        
+        sensor = ConfiguratableSensorStub(26, 62, 72, 30); 
+        report = Report(sensor);
         cout << report << endl;
         assert(report.find("partly cloudy") != string::npos);
+        
 
     }
 
@@ -89,7 +95,7 @@ namespace WeatherSpace
         // This instance of stub needs to be different-
         // to give high precipitation (>60) and low wind-speed (<50)
         
-        ConfiguratableSensorStub sensor = (26, 60, 72, 50); 
+        ConfiguratableSensorStub sensor(26, 60, 72, 50); 
         string report = Report(sensor);
         cout << report << endl;
         assert(report.find("rain") != string::npos);
@@ -97,7 +103,7 @@ namespace WeatherSpace
 
         // strengthen the assert to expose the bug
         // (function returns Sunny day, it should predict rain)
-        string report = Report(sensor);
+        report = Report(sensor);
         assert(report.length() > 0);
     }
 }
