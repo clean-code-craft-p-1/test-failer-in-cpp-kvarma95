@@ -19,25 +19,38 @@ namespace WeatherSpace
     /// test the other parts of this application in isolation
     /// without needing the actual Sensor during development
     /// </summary>
-    class SensorStub : public IWeatherSensor {
+    class ConfiguratableSensorStub: public IWeatherSensor {
+        public:
+        double temp;
+        int precip;
+        int humid;
+        int windspeed; 
+        ConfiguratableSensorStub(double temp,int precip,int humid,int windspeed)
+        {
+            this->temp = temp;
+            this->precip = precip;
+            this->humid = humid;
+            this->windspeed = windspeed;
+        }
         int Humidity() const override {
-            return 72;
+            return humid;
         }
 
         int Precipitation() const override {
-            return 70;
+            return precip;
         }
 
         double TemperatureInC() const override {
-            return 26;
+            return temp;
         }
 
         int WindSpeedKMPH() const override {
-            return 52;
+            return windspeed;
         }
     };
     string Report(const IWeatherSensor& sensor)
     {
+        
         int precipitation = sensor.Precipitation();
         // precipitation < 20 is a sunny day
         string report = "Sunny Day";
@@ -54,17 +67,33 @@ namespace WeatherSpace
     
     void TestRainy()
     {
-        SensorStub sensor;
+        ConfiguratableSensorStub sensor = (26, 70, 72, 52); 
         string report = Report(sensor);
         cout << report << endl;
         assert(report.find("rain") != string::npos);
+
+        sensor = (26, 60, 72, 30); 
+        string report = Report(sensor);
+        cout << report << endl;
+        assert(report.find("partly cloudy") != string::npos);
+
+        sensor = (26, 62, 72, 30); 
+        string report = Report(sensor);
+        cout << report << endl;
+        assert(report.find("partly cloudy") != string::npos);
+
     }
 
     void TestHighPrecipitation()
     {
         // This instance of stub needs to be different-
         // to give high precipitation (>60) and low wind-speed (<50)
-        SensorStub sensor;
+        
+        ConfiguratableSensorStub sensor = (26, 60, 72, 50); 
+        string report = Report(sensor);
+        cout << report << endl;
+        assert(report.find("rain") != string::npos);
+
 
         // strengthen the assert to expose the bug
         // (function returns Sunny day, it should predict rain)
